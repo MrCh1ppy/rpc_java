@@ -6,14 +6,32 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dao.message.RpcRequestMsg;
 import org.example.utils.BasePineLineFactory;
 
 import java.net.InetSocketAddress;
 
 @Slf4j
 public class PpcClient {
+
+	private static Channel channel=null;
+	private static final Object lock=new Object();
+	public static Channel getChannel(){
+		if(channel!=null){
+			return channel;
+		}
+		synchronized (lock){
+			if(channel!=null){
+				return channel;
+			}
+			initChannel();
+			return channel;
+		}
+	}
 	public static void main(String[] args) {
+		initChannel();
+	}
+
+	private static void initChannel() {
 		var worker = new NioEventLoopGroup();
 		try{
 			var future = new Bootstrap()
@@ -33,20 +51,10 @@ public class PpcClient {
 						}
 					})
 					.connect(new InetSocketAddress("localhost",9000)).sync();
-			future.channel().writeAndFlush(new RpcRequestMsg(
-					"org.example.service.HelloService",
-					"hello",
-					String.class,
-					new Class[]{String.class},
-					new Object[]{"css"}
-					));
-			future.channel().closeFuture().sync();
+			future.channel().closeFuture().addListener(future1 -> worker.shutdownGracefully());
 		}catch (InterruptedException e){
 			throw new RuntimeException(e);
-		}finally {
-			worker.shutdownGracefully();
 		}
-
 	}
 
 }

@@ -12,7 +12,6 @@ public abstract class Message implements Serializable {
 
 	@JsonIgnore
 	private final MsgType type;
-	@JsonIgnore
 	private final int sequenceId;
 
 	@JsonIgnore

@@ -36,9 +36,9 @@ public class RpcServer {
 						}
 					})
 					.bind(new InetSocketAddress(9000)).sync();
-			System.out.println("on");
 			channelFuture.channel().closeFuture().sync();
-		}catch (Exception e){
+		}catch (InterruptedException e){
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}finally {
 			boss.shutdownGracefully();
