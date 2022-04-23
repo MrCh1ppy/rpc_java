@@ -13,15 +13,15 @@ import java.lang.reflect.InvocationTargetException;
 @ChannelHandler.Sharable
 public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequestMsg> {
 	/**
-	 * Is called for each message of type {@link I}.
+	 * Is called for each message of type {@link }.
 	 *
 	 * @param ctx the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
 	 *            belongs to
-	 * @param msg the message to handle
+	 * @param request the message to handle
 	 * @throws Exception is thrown if an error occurred
 	 */
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, @NotNull RpcRequestMsg request) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, @NotNull RpcRequestMsg request){
 		Object res=null;
 		Exception exception=null;
 		try{
@@ -32,7 +32,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequestMsg
 			e.printStackTrace();
 			exception=e;
 		}finally {
-			ctx.writeAndFlush(new RpcResponseMsg(res,exception));
+			ctx.writeAndFlush(new RpcResponseMsg(res,exception).setSequenceId(request.getSequenceId()));
 		}
 	}
 }

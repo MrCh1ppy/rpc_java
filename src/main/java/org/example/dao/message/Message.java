@@ -12,7 +12,7 @@ public abstract class Message implements Serializable {
 
 	@JsonIgnore
 	private final MsgType type;
-	private final int sequenceId;
+	private int sequenceId;
 
 	@JsonIgnore
 	private static final AtomicInteger sequenceNum=new AtomicInteger(ThreadLocalRandom.current().nextInt(100));
@@ -29,5 +29,10 @@ public abstract class Message implements Serializable {
 
 	public int getSequenceId() {
 		return sequenceId;
+	}
+
+	public Message setSequenceId(int sequenceId) {
+		this.sequenceId = sequenceId;
+		return this;
 	}
 }

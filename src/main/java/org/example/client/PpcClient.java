@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dao.message.RpcRequestMsg;
 import org.example.utils.BasePineLineFactory;
 
 import java.net.InetSocketAddress;
@@ -28,7 +29,13 @@ public class PpcClient {
 		}
 	}
 	public static void main(String[] args) {
-		initChannel();
+		getChannel().writeAndFlush(new RpcRequestMsg(
+				"org.example.service.HelloService",
+				"hello",
+				String.class,
+				new Class[]{String.class},
+				new Object[]{"css"}
+		));
 	}
 
 	private static void initChannel() {
@@ -39,7 +46,7 @@ public class PpcClient {
 					.channel(NioSocketChannel.class)
 					.handler(new ChannelInitializer<SocketChannel>() {
 						@Override
-						protected void initChannel(SocketChannel ch) throws Exception {
+						protected void initChannel(SocketChannel ch) {
 							var pipeline = ch.pipeline();
 							pipeline
 									.addLast(BasePineLineFactory.getIdleStateHandler(0,3,0))
@@ -51,8 +58,10 @@ public class PpcClient {
 						}
 					})
 					.connect(new InetSocketAddress("localhost",9000)).sync();
+			channel=future.channel();
 			future.channel().closeFuture().addListener(future1 -> worker.shutdownGracefully());
 		}catch (InterruptedException e){
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
