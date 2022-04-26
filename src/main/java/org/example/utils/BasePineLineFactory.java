@@ -15,7 +15,7 @@ public interface BasePineLineFactory {
 
 	@Contract(" -> new")
 	static @NotNull LengthFieldBasedFrameDecoder getFrameDecoder(){
-		return new LengthFieldBasedFrameDecoder(1024,12,4,0,0);
+		return new LengthFieldBasedFrameDecoder(10024,12,4,0,0);
 	}
 
 	@Contract(value = "_, _, _ -> new", pure = true)

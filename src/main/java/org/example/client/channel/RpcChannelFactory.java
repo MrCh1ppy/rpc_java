@@ -1,4 +1,4 @@
-package org.example.client;
+package org.example.client.channel;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -6,13 +6,12 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dao.message.RpcRequestMsg;
 import org.example.utils.BasePineLineFactory;
 
 import java.net.InetSocketAddress;
 
 @Slf4j
-public class PpcClient {
+public class RpcChannelFactory {
 
 	private static Channel channel=null;
 	private static final Object lock=new Object();
@@ -27,15 +26,6 @@ public class PpcClient {
 			initChannel();
 			return channel;
 		}
-	}
-	public static void main(String[] args) {
-		getChannel().writeAndFlush(new RpcRequestMsg(
-				"org.example.service.HelloService",
-				"hello",
-				String.class,
-				new Class[]{String.class},
-				new Object[]{"css"}
-		));
 	}
 
 	private static void initChannel() {
@@ -54,6 +44,7 @@ public class PpcClient {
 									.addLast(BasePineLineFactory.getLoggingHandler())
 									.addLast(BasePineLineFactory.getCodec())
 									.addLast(ClientPineLineFactory.getClientDuplexHandler())
+									.addLast(ClientPineLineFactory.getRpcResponseHandler())
 									;
 						}
 					})

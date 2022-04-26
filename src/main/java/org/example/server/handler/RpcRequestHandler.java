@@ -24,13 +24,15 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequestMsg
 	protected void channelRead0(ChannelHandlerContext ctx, @NotNull RpcRequestMsg request){
 		Object res=null;
 		Exception exception=null;
+		Class<?> returnType=null;
 		try{
 			var instance = ServiceFactory.getInstance(Class.forName(request.getInterfaceName()));
 			var method = instance.getClass().getMethod(request.getMethodName(), request.getParameterTypes());
 			res = method.invoke(instance, request.getParameterValue());
+			returnType=method.getReturnType();
 		}catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
 			e.printStackTrace();
-			exception=e;
+			exception=new Exception("远程调用出错"+e.getCause().getMessage());
 		}finally {
 			ctx.writeAndFlush(new RpcResponseMsg(res,exception).setSequenceId(request.getSequenceId()));
 		}

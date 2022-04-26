@@ -7,8 +7,10 @@ import lombok.Setter;
 @Setter
 public class RpcResponseMsg extends Message {
 	private static final MsgType type=MsgType.RESPONSE;
-	private Object returnValue;
+	private Object  returnValue;
 	private Exception exceptionValue;
+
+	private Class<?> returnType;
 
 
 	public RpcResponseMsg(Object returnValue, Exception exceptionValue) {
@@ -20,4 +22,5 @@ public class RpcResponseMsg extends Message {
 	public RpcResponseMsg() {
 		super(type);
 	}
+
 }
