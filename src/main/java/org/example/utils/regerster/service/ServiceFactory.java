@@ -12,7 +12,7 @@ public abstract class ServiceFactory {
 	private ServiceFactory() {
 	}
 
-	public static void addServiceProvider(Object service,String serviceName){
+	public static <T> void addServiceProvider(T service,String serviceName){
 		if(map.containsKey(serviceName)){
 			return;
 		}

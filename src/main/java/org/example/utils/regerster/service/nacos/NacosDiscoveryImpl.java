@@ -8,10 +8,10 @@ import org.example.utils.regerster.service.ServiceDiscovery;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-public class SetviceDiscoveryImpl implements ServiceDiscovery {
+public class NacosDiscoveryImpl implements ServiceDiscovery {
 	private final LoadBalancer.Rules loadBalancer;
 
-	public SetviceDiscoveryImpl(LoadBalancer.Rules loadBalancer) {
+	public NacosDiscoveryImpl(LoadBalancer.Rules loadBalancer) {
 		this.loadBalancer = loadBalancer==null?LoadBalancer.Rules.ROUND_ROBIN_RULE:loadBalancer;
 	}
 

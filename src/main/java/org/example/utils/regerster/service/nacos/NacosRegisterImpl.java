@@ -5,7 +5,7 @@ import org.example.utils.regerster.service.ServiceRegister;
 
 import java.net.InetSocketAddress;
 
-public class ServiceRegisterImpl implements ServiceRegister {
+public class NacosRegisterImpl implements ServiceRegister {
 	@Override
 	public void register(String serviceName, InetSocketAddress inetSocketAddress) {
 		try{
