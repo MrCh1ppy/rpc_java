@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.example.dao.message.RpcRequestMsg;
 import org.example.dao.message.RpcResponseMsg;
-import org.example.utils.service.ServiceFactory;
+import org.example.utils.regerster.service.ServiceFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,12 +24,10 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequestMsg
 	protected void channelRead0(ChannelHandlerContext ctx, @NotNull RpcRequestMsg request){
 		Object res=null;
 		Exception exception=null;
-		Class<?> returnType=null;
 		try{
-			var instance = ServiceFactory.getInstance(Class.forName(request.getInterfaceName()));
+			var instance = ServiceFactory.getService(request.getInterfaceName());
 			var method = instance.getClass().getMethod(request.getMethodName(), request.getParameterTypes());
 			res = method.invoke(instance, request.getParameterValue());
-			returnType=method.getReturnType();
 		}catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
 			e.printStackTrace();
 			exception=new Exception("远程调用出错"+e.getCause().getMessage());
