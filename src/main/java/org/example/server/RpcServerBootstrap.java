@@ -47,7 +47,7 @@ public class RpcServerBootstrap {
 			e.printStackTrace();
 			throw new RuntimeException("main class not found");
 		}
-		if(mainClass.isAnnotationPresent(RpcBootStrap.class)){
+		if(!mainClass.isAnnotationPresent(RpcBootStrap.class)){
 			throw new RuntimeException("main class need annotation \"@RpcBootStrap\"");
 		}
 		String value = mainClass.getAnnotation(RpcBootStrap.class).value();
@@ -61,6 +61,7 @@ public class RpcServerBootstrap {
 				String serviceName = cur.getAnnotation(ServiceProvider.class).name();
 				Object object;
 				try{
+					log.debug("build class{}",cur.toString());
 					object=cur.getDeclaredConstructor().newInstance();
 				} catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
 				         InvocationTargetException e) {

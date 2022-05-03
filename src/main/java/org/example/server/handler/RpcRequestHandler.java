@@ -3,6 +3,8 @@ package org.example.server.handler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.ReferenceCountUtil;
+import org.example.dao.message.Message;
 import org.example.dao.message.RpcRequestMsg;
 import org.example.dao.message.RpcResponseMsg;
 import org.example.utils.regerster.service.ServiceFactory;
@@ -28,11 +30,13 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequestMsg
 			var instance = ServiceFactory.getService(request.getInterfaceName());
 			var method = instance.getClass().getMethod(request.getMethodName(), request.getParameterTypes());
 			res = method.invoke(instance, request.getParameterValue());
-		}catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
+		}catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
 			e.printStackTrace();
 			exception=new Exception("远程调用出错"+e.getCause().getMessage());
 		}finally {
-			ctx.writeAndFlush(new RpcResponseMsg(res,exception).setSequenceId(request.getSequenceId()));
+			Message message = new RpcResponseMsg(res, exception).setSequenceId(request.getSequenceId());
+			ctx.writeAndFlush(message);
+			ReferenceCountUtil.release(message);
 		}
 	}
 }

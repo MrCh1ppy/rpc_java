@@ -42,4 +42,9 @@ public class RpcResponseHandler extends SimpleChannelInboundHandler<RpcResponseM
 			}
 		}
 	}
+
+	public <T>void addRequest(int sequenceId,Promise<T> promise){
+		Promise<Object> promise1 = (Promise<Object>) promise;
+		map.put(sequenceId,promise1);
+	}
 }
